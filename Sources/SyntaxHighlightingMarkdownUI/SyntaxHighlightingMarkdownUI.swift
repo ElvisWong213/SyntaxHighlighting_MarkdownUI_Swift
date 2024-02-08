@@ -14,9 +14,9 @@ public class SyntaxHighlightingMarkdownUI {
     private var javaConfiguration: LanguageConfiguration? = nil
     private var jsConfiguration: LanguageConfiguration? = nil
     private var rustConfiguration: LanguageConfiguration? = nil
-    
-    public static let share: SyntaxHighlightingMarkdownUI = SyntaxHighlightingMarkdownUI()
-    
+        
+    public static let shared: SyntaxHighlightingMarkdownUI = SyntaxHighlightingMarkdownUI()
+            
     private init() {
         do {
             self.swiftConfiguration = try LanguageConfiguration(tree_sitter_swift(), name: "Swift")
@@ -50,10 +50,11 @@ public class SyntaxHighlightingMarkdownUI {
         
         var output = AttributedString(content)
         for capture in resolvingSequence {
-            guard let range = Range(capture.range, in: AttributedString(content)) else {
-                continue
-            }
-            output[range].foregroundColor = .green
+            guard let range = Range(capture.range, in: AttributedString(content)) else { continue }
+            let firstName = String(capture.name.split(separator: ".").first ?? "")
+            guard let type = TokenType(rawValue: firstName) else { continue }
+            guard let color = Theme.xcodeColors().tokens[type] else { continue }
+            output[range].foregroundColor = color
         }
         return Text(output)
     }
