@@ -70,6 +70,16 @@ public class SyntaxHighlightingMarkdownUI {
                 throw SyntaxHighlightingError.LanguageConfigurationError
             }
             return javaConfiguration
+        case "javascript":
+            guard let jsConfiguration = jsConfiguration else {
+                throw SyntaxHighlightingError.LanguageConfigurationError
+            }
+            return jsConfiguration
+        case "rust":
+            guard let rustConfiguration = rustConfiguration else {
+                throw SyntaxHighlightingError.LanguageConfigurationError
+            }
+            return rustConfiguration
         default: throw SyntaxHighlightingError.UnsupportedFormatError
         }
     }
