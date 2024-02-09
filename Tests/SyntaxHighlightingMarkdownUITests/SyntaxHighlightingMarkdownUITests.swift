@@ -6,7 +6,7 @@ final class SyntaxHighlightingMarkdownUITests: XCTestCase {
     
     override func setUp() {
         let start = Date.now
-        self.shmui = SyntaxHighlightingMarkdownUI.share
+        self.shmui = SyntaxHighlightingMarkdownUI.shared
         print(Date.now.timeIntervalSince(start))
     }
     
@@ -50,7 +50,9 @@ final class SyntaxHighlightingMarkdownUITests: XCTestCase {
         measure {
             do {
                 try shmui.output(content, language: "swift")
-            } catch {}
+            } catch {
+                print(error)
+            }
         }
     }
     

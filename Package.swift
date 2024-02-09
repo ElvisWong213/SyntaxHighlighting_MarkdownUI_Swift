@@ -16,7 +16,7 @@ let package = Package(
             targets: ["SyntaxHighlightingMarkdownUI"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", from: "0.8.0"),
+        .package(url: "https://github.com/ElvisWong213/SwiftTreeSitter", branch: "fix/ios-support"),
         .package(url: "https://github.com/alex-pinkus/tree-sitter-swift", branch: "with-generated-files"),
         .package(url: "https://github.com/tree-sitter/tree-sitter-java", from: "0.20.2"),
         .package(url: "https://github.com/tree-sitter/tree-sitter-javascript", from: "0.20.3"),
