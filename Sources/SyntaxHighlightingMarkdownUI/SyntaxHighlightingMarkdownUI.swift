@@ -10,26 +10,25 @@ import TreeSitterRust
 
 @available(macOS 12, *)
 public class SyntaxHighlightingMarkdownUI {
-    private var swiftConfiguration: LanguageConfiguration? = nil
-    private var javaConfiguration: LanguageConfiguration? = nil
-    private var jsConfiguration: LanguageConfiguration? = nil
-    private var rustConfiguration: LanguageConfiguration? = nil
+    private var languagesConfiguration: [String : LanguageConfiguration] = [:]
         
     public static let shared: SyntaxHighlightingMarkdownUI = SyntaxHighlightingMarkdownUI()
             
     private init() {
         do {
-            self.swiftConfiguration = try LanguageConfiguration(tree_sitter_swift(), name: "Swift")
-            self.javaConfiguration = try LanguageConfiguration(tree_sitter_java(), name: "Java")
-            self.jsConfiguration = try LanguageConfiguration(tree_sitter_javascript(), name: "JS")
-            self.rustConfiguration = try LanguageConfiguration(tree_sitter_rust(), name: "Rust")
+            self.languagesConfiguration["swift"] = try LanguageConfiguration(tree_sitter_swift(), name: "Swift")
+            self.languagesConfiguration["java"] = try LanguageConfiguration(tree_sitter_java(), name: "Java")
+            self.languagesConfiguration["javascript"] = try LanguageConfiguration(tree_sitter_javascript(), name: "JS")
+            self.languagesConfiguration["rust"] = try LanguageConfiguration(tree_sitter_rust(), name: "Rust")
         } catch {
             print(error)
         }
     }
     
     public func output(_ content: String, language: String, theme: MarkdownTheme = MarkdownTheme.xcodeColors()) throws -> Text {
-        let languageConfiguration: LanguageConfiguration = try getLanguageConfiguration(language)
+        guard let languageConfiguration: LanguageConfiguration = languagesConfiguration[language] else {
+            throw SyntaxHighlightingError.UnsupportedFormatError
+        }
         let parser: Parser = Parser()
         
         try parser.setLanguage(languageConfiguration.language)
@@ -55,32 +54,6 @@ public class SyntaxHighlightingMarkdownUI {
             output[range].foregroundColor = color
         }
         return Text(output)
-    }
-    
-    private func getLanguageConfiguration(_ language: String) throws -> LanguageConfiguration {
-        switch language.lowercased() {
-        case "swift":
-            guard let swiftConfiguration = swiftConfiguration else {
-                throw SyntaxHighlightingError.LanguageConfigurationError
-            }
-            return swiftConfiguration
-        case "java":
-            guard let javaConfiguration = javaConfiguration else {
-                throw SyntaxHighlightingError.LanguageConfigurationError
-            }
-            return javaConfiguration
-        case "javascript":
-            guard let jsConfiguration = jsConfiguration else {
-                throw SyntaxHighlightingError.LanguageConfigurationError
-            }
-            return jsConfiguration
-        case "rust":
-            guard let rustConfiguration = rustConfiguration else {
-                throw SyntaxHighlightingError.LanguageConfigurationError
-            }
-            return rustConfiguration
-        default: throw SyntaxHighlightingError.UnsupportedFormatError
-        }
     }
 }
 
