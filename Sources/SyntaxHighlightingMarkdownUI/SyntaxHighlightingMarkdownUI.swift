@@ -7,6 +7,9 @@ import TreeSitterSwift
 import TreeSitterJava
 import TreeSitterJS
 import TreeSitterRust
+import TreeSitterJSON
+import TreeSitterPython
+import TreeSitterBash
 
 @available(macOS 12, *)
 public class SyntaxHighlightingMarkdownUI {
@@ -20,6 +23,9 @@ public class SyntaxHighlightingMarkdownUI {
             self.languagesConfiguration["java"] = try LanguageConfiguration(tree_sitter_java(), name: "Java")
             self.languagesConfiguration["javascript"] = try LanguageConfiguration(tree_sitter_javascript(), name: "JS")
             self.languagesConfiguration["rust"] = try LanguageConfiguration(tree_sitter_rust(), name: "Rust")
+            self.languagesConfiguration["json"] = try LanguageConfiguration(tree_sitter_json(), name: "Json")
+            self.languagesConfiguration["python"] = try LanguageConfiguration(tree_sitter_python(), name: "Python")
+            self.languagesConfiguration["bash"] = try LanguageConfiguration(tree_sitter_bash(), name: "Bash")
         } catch {
             print(error)
         }

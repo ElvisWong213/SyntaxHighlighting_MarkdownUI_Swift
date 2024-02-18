@@ -68,21 +68,22 @@ public extension MarkdownTheme {
         let redPink = Color(red: 242/255, green: 36/255, blue: 140/255)
         let cadetGrey = Color(red: 142/255, green: 161/255, blue: 181/255)
         let mediumTurquoise = Color(red: 86/255, green: 208/255, blue: 179/255)
+        let red = Color(red: 252/255, green: 70/255, blue: 81/255)
         
         var theme = MarkdownTheme()
         theme.variable = VariableElement(default: .white, builtin: redPink)
-        theme.constant = Constant(default: .white, builtin: .white, macro: .white)
+        theme.constant = Constant(default: .white, builtin: red, macro: .white)
         theme.module = Module(default: .white, builtin: .white)
         theme.label = Label(default: .white)
-        theme.string = StringElement(default: Color(red: 252/255, green: 70/255, blue: 81/255), special: StringElement.Special(default: .white))
+        theme.string = StringElement(default: red, special: StringElement.Special(default: .white))
         theme.character = Character(default: Color(red: 255/255, green: 231/255, blue: 109/255), special: .white)
         theme.boolean = Boolean(default: redPink)
         theme.number = Number(default: Color(red: 255/255, green: 231/255, blue: 109/255), float: .white)
-        theme.type = `Type`(default: Color(red: 102/255, green: 218/255, blue: 255/255), builtin: .white, definition: Color(red: 171/255, green: 100/255, blue: 255/255), qualifier: .white)
+        theme.type = `Type`(default: Color(red: 102/255, green: 218/255, blue: 255/255), builtin: mediumTurquoise, definition: Color(red: 171/255, green: 100/255, blue: 255/255), qualifier: .white)
         theme.attribute = Attribute(default: Color(red: 224/255, green: 157/255, blue: 101/255))
         theme.property = Property(default: mediumTurquoise)
         theme.function = Function(default: mediumTurquoise,
-                                  builtin: .white,
+                                  builtin: mediumTurquoise,
                                   call: Color(red: 208/255, green: 168/255, blue: 255/255),
                                   macro: .white,
                                   method: Function.Method(default: redPink, call: Color(red: 171/255, green: 100/255, blue: 255/255)))

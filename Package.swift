@@ -18,9 +18,12 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/ElvisWong213/SwiftTreeSitter", branch: "fix/ios-support"),
         .package(url: "https://github.com/alex-pinkus/tree-sitter-swift", branch: "with-generated-files"),
-        .package(url: "https://github.com/tree-sitter/tree-sitter-java", from: "0.20.2"),
-        .package(url: "https://github.com/tree-sitter/tree-sitter-javascript", from: "0.20.3"),
-        .package(url: "https://github.com/tree-sitter/tree-sitter-rust", from: "0.20.4"),
+        .package(url: "https://github.com/tree-sitter/tree-sitter-java", exact: "0.20.2"),
+        .package(url: "https://github.com/tree-sitter/tree-sitter-javascript", exact: "0.20.3"),
+        .package(url: "https://github.com/tree-sitter/tree-sitter-rust", exact: "0.20.4"),
+        .package(url: "https://github.com/tree-sitter/tree-sitter-json", exact: "0.20.2"),
+        .package(url: "https://github.com/tree-sitter/tree-sitter-python", exact: "0.20.4"),
+        .package(url: "https://github.com/tree-sitter/tree-sitter-bash", exact: "0.20.4"),
     ], targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
@@ -32,6 +35,9 @@ let package = Package(
                 .product(name: "TreeSitterJava", package: "tree-sitter-java"),
                 .product(name: "TreeSitterJS", package: "tree-sitter-javascript"),
                 .product(name: "TreeSitterRust", package: "tree-sitter-rust"),
+                .product(name: "TreeSitterJSON", package: "tree-sitter-json"),
+                .product(name: "TreeSitterPython", package: "tree-sitter-python"),
+                .product(name: "TreeSitterBash", package: "tree-sitter-bash"),
             ]
         ),
         .testTarget(
