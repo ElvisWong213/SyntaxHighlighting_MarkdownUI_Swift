@@ -28,7 +28,7 @@ public class SyntaxHighlightingMarkdownUI {
         }
     }
     
-    public func output(_ content: String, language: String, theme: MarkdownTheme? = MarkdownTheme.xcodeColors()) throws -> Text {
+    public func output(_ content: String, language: String, theme: MarkdownTheme = MarkdownTheme.xcodeColors()) throws -> Text {
         let languageConfiguration: LanguageConfiguration = try getLanguageConfiguration(language)
         let parser: Parser = Parser()
         
@@ -51,7 +51,7 @@ public class SyntaxHighlightingMarkdownUI {
         var output = AttributedString(content)
         for capture in resolvingSequence {
             guard let range = Range(capture.range, in: AttributedString(content)) else { continue }
-            guard let color = theme?.getColor(capture.name) else { continue }
+            guard let color = theme.getColor(capture.name) else { continue }
             output[range].foregroundColor = color
         }
         return Text(output)

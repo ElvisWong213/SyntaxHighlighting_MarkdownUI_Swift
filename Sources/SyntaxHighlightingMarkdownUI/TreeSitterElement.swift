@@ -8,8 +8,24 @@
 import Foundation
 import SwiftUI
 
-public protocol TreeSitterElement {
-    func toColor(_ str: [Substring], _ index: Int) -> Color?
+public protocol TreeSitterElement: PropertyReflectable {
+    func toColor(_ str: inout [Substring]) -> Color?
+}
+
+extension TreeSitterElement {
+    public func toColor(_ str: inout [Substring]) -> Color? {
+        if str.isEmpty {
+            return self["default"] as? Color
+        }
+        let token = String(str.removeFirst())
+        if let element = self[token] as? TreeSitterElement {
+            return element.toColor(&str)
+        }
+        if let element = self[token] as? Color {
+            return element
+        }
+        return self["default"] as? Color
+    }
 }
 
 public struct VariableElement: TreeSitterElement {
@@ -24,19 +40,6 @@ public struct VariableElement: TreeSitterElement {
         self.parameter = parameter
         self.member = member
     }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "builtin":
-            return builtin
-        case "parameter":
-            return parameter
-        case "member":
-            return member
-        default:
-            return `default`
-        }
-    }
 }
 
 public struct Constant: TreeSitterElement {
@@ -49,17 +52,6 @@ public struct Constant: TreeSitterElement {
         self.builtin = builtin
         self.macro = macro
     }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "builtin":
-            return builtin
-        case "macro":
-            return macro
-        default:
-            return `default`
-        }
-    }
 }
 
 public struct Module: TreeSitterElement {
@@ -70,15 +62,6 @@ public struct Module: TreeSitterElement {
         self.default = `default`
         self.builtin = builtin
     }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "builtin":
-            return builtin
-        default:
-            return `default`
-        }
-    }
 }
 
 public struct Label: TreeSitterElement {
@@ -86,10 +69,6 @@ public struct Label: TreeSitterElement {
     
     public init(`default`: Color) {
         self.default = `default`
-    }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        return `default`
     }
 }
 
@@ -108,21 +87,6 @@ public struct StringElement: TreeSitterElement {
         self.special = special
     }
     
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "documentation":
-            return documentation
-        case "regexp":
-            return regexp
-        case "escape":
-            return escape
-        case "special":
-            return special.toColor(str, index + 1)
-        default:
-            return `default`
-        }
-    }
-    
     public struct Special: TreeSitterElement {
         let `default`: Color
         let symbol: Color?
@@ -135,19 +99,6 @@ public struct StringElement: TreeSitterElement {
             self.url = url
             self.path = path
         }
-        
-        public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-            switch str.getElement(index) {
-            case "symbol":
-                return symbol
-            case "url":
-                return url
-            case "path":
-                return path
-            default:
-                return `default`
-            }
-        }
     }
 }
 
@@ -159,15 +110,6 @@ public struct Character: TreeSitterElement {
         self.default = `default`
         self.special = special
     }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "special":
-            return special
-        default:
-            return `default`
-        }
-    }
 }
 
 public struct Boolean: TreeSitterElement {
@@ -175,10 +117,6 @@ public struct Boolean: TreeSitterElement {
     
     public init(`default`: Color) {
         self.default = `default`
-    }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        return `default`
     }
 }
 
@@ -189,15 +127,6 @@ public struct Number: TreeSitterElement {
     public init(`default`: Color, float: Color? = nil) {
         self.default = `default`
         self.float = float
-    }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "float":
-            return float
-        default:
-            return `default`
-        }
     }
 }
 
@@ -213,19 +142,6 @@ public struct `Type`: TreeSitterElement {
         self.definition = definition
         self.qualifier = qualifier
     }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "builtin":
-            return builtin
-        case "definition":
-            return definition
-        case "qualifier":
-            return qualifier
-        default:
-            return `default`
-        }
-    }
 }
 
 public struct Attribute: TreeSitterElement {
@@ -234,10 +150,6 @@ public struct Attribute: TreeSitterElement {
     public init(`default`: Color) {
         self.default = `default`
     }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        return `default`
-    }
 }
 
 public struct Property: TreeSitterElement {
@@ -245,10 +157,6 @@ public struct Property: TreeSitterElement {
     
     public init(`default`: Color) {
         self.default = `default`
-    }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        return `default`
     }
 }
 
@@ -267,21 +175,6 @@ public struct Function: TreeSitterElement {
         self.method = method
     }
     
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "builtin":
-            return builtin
-        case "call":
-            return call
-        case "macro":
-            return macro
-        case "method":
-            return method.toColor(str, index + 1)
-        default:
-            return `default`
-        }
-    }
-    
     public struct Method: TreeSitterElement {
         let `default`: Color
         let call: Color?
@@ -289,15 +182,6 @@ public struct Function: TreeSitterElement {
         public init(`default`: Color, call: Color? = nil) {
             self.default = `default`
             self.call = call
-        }
-        
-        public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-            switch str.getElement(index) {
-            case "call":
-                return call
-            default:
-                return `default`
-            }
         }
     }
 }
@@ -308,10 +192,6 @@ public struct Constructor: TreeSitterElement {
     public init(`default`: Color) {
         self.default = `default`
     }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        return `default`
-    }
 }
 
 public struct Operator: TreeSitterElement {
@@ -319,10 +199,6 @@ public struct Operator: TreeSitterElement {
     
     public init(`default`: Color) {
         self.default = `default`
-    }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        return `default`
     }
 }
 
@@ -355,35 +231,6 @@ public struct Keyword: TreeSitterElement {
         self.conditional = conditional
     }
     
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "coroutine":
-            return coroutine
-        case "function":
-            return function
-        case "operator":
-            return `operator`
-        case "import":
-            return `import`
-        case "storage":
-            return storage
-        case "repeat":
-            return `repeat`
-        case "return":
-            return `return`
-        case "debug":
-            return debug
-        case "exception":
-            return exception
-        case "directive":
-            return directive.toColor(str, index + 1)
-        case "conditional":
-            return conditional.toColor(str, index + 1)
-        default:
-            return `default`
-        }
-    }
-    
     public struct Conditional: TreeSitterElement {
         let `default`: Color
         let ternary: Color?
@@ -391,15 +238,6 @@ public struct Keyword: TreeSitterElement {
         public init(`default`: Color, ternary: Color? = nil) {
             self.default = `default`
             self.ternary = ternary
-        }
-        
-        public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-            switch str.getElement(index) {
-            case "ternary":
-                return ternary
-            default:
-                return `default`
-            }
         }
     }
     
@@ -410,15 +248,6 @@ public struct Keyword: TreeSitterElement {
         public init(`default`: Color, define: Color? = nil) {
             self.default = `default`
             self.define = define
-        }
-        
-        public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-            switch str.getElement(index) {
-            case "define":
-                return define
-            default:
-                return `default`
-            }
         }
     }
 }
@@ -432,19 +261,6 @@ public struct Punctuation: TreeSitterElement {
         self.delimiter = delimiter
         self.bracket = bracket
         self.special = special
-    }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "delimiter":
-            return delimiter
-        case "bracket":
-            return bracket
-        case "special":
-            return special
-        default:
-            return nil
-        }
     }
 }
 
@@ -463,23 +279,6 @@ public struct Comment: TreeSitterElement {
         self.warning = warning
         self.todo = todo
         self.note = note
-    }
-    
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "documentation":
-            return documentation
-        case "error":
-            return error
-        case "warning":
-            return warning
-        case "todo":
-            return todo
-        case "note":
-            return note
-        default:
-            return `default`
-        }
     }
 }
 
@@ -510,35 +309,6 @@ public struct Markup: TreeSitterElement {
         self.list = list
     }
     
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "strong":
-            return strong
-        case "italic":
-            return italic
-        case "strikethrough":
-            return strikethrough
-        case "underline":
-            return underline
-        case "heading":
-            return heading
-        case "quote":
-            return quote
-        case "math":
-            return math
-        case "environment":
-            return environment
-        case "link":
-            return link.toColor(str, index + 1)
-        case "raw":
-            return raw.toColor(str, index + 1)
-        case "list":
-            return list.toColor(str, index + 1)
-        default:
-            return nil
-        }
-    }
-    
     public struct TreesitterLink: TreeSitterElement {
         let `default`: Color
         let label: Color?
@@ -549,17 +319,6 @@ public struct Markup: TreeSitterElement {
             self.label = label
             self.url = url
         }
-        
-        public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-            switch str.getElement(index) {
-            case "label":
-                return label
-            case "url":
-                return url
-            default:
-                return `default`
-            }
-        }
     }
     
     public struct Raw: TreeSitterElement {
@@ -569,15 +328,6 @@ public struct Markup: TreeSitterElement {
         public init(`default`: Color, block: Color? = nil) {
             self.default = `default`
             self.block = block
-        }
-        
-        public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-            switch str.getElement(index) {
-            case "block":
-                return block
-            default:
-                return `default`
-            }
         }
     }
     
@@ -590,17 +340,6 @@ public struct Markup: TreeSitterElement {
             self.default = `default`
             self.checked = checked
             self.unchecked = unchecked
-        }
-        
-        public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-            switch str.getElement(index) {
-            case "checked":
-                return checked
-            case "unchecked":
-                return unchecked
-            default:
-                return `default`
-            }
         }
     }
 }
@@ -615,17 +354,46 @@ public struct Tag: TreeSitterElement {
         self.attribute = attribute
         self.delimiter = delimiter
     }
+}
+
+public struct Local: TreeSitterElement {
+    public let definition: Definition
+    public let scope: Color?
+    public let reference: Color?
     
-    public func toColor(_ str: [Substring], _ index: Int) -> Color? {
-        switch str.getElement(index) {
-        case "name":
-            return name
-        case "attribute":
-            return attribute
-        case "delimiter":
-            return delimiter
-        default:
-            return nil
-        }
+    public init(definition: Definition, scope: Color? = nil, reference: Color? = nil) {
+        self.definition = definition
+        self.scope = scope
+        self.reference = reference
+    }
+    
+    public struct Definition: TreeSitterElement {
+        public let constant: Color?
+        public let function: Color?
+        public let method: Color?
+        public let variable: Color?
+        public let parameter: Color?
+        public let macro: Color?
+        public let type: Color?
+        public let field: Color?
+        public let `enum`: Color?
+        public let namespace: Color?
+        public let `import`: Color?
+        public let associated: Color?
+        
+        public init(constant: Color? = nil, function: Color? = nil, method: Color? = nil, variable: Color? = nil, parameter: Color? = nil, macro: Color? = nil, type: Color? = nil, field: Color? = nil, enum: Color? = nil, namespace: Color? = nil, import: Color? = nil, associated: Color? = nil) {
+              self.constant = constant
+              self.function = function
+              self.method = method
+              self.variable = variable
+              self.parameter = parameter
+              self.macro = macro
+              self.type = type
+              self.field = field
+              self.enum = `enum`
+              self.namespace = namespace
+              self.import = `import`
+              self.associated = associated
+          }
     }
 }
