@@ -10,6 +10,7 @@ import TreeSitterRust
 import TreeSitterJSON
 import TreeSitterPython
 import TreeSitterBash
+import tree_sitter
 
 @available(macOS 12, *)
 public class SyntaxHighlightingMarkdownUI {
@@ -26,6 +27,14 @@ public class SyntaxHighlightingMarkdownUI {
             self.languagesConfiguration["json"] = try LanguageConfiguration(tree_sitter_json(), name: "Json")
             self.languagesConfiguration["python"] = try LanguageConfiguration(tree_sitter_python(), name: "Python")
             self.languagesConfiguration["bash"] = try LanguageConfiguration(tree_sitter_bash(), name: "Bash")
+        } catch {
+            print(error)
+        }
+    }
+    
+    public func addConfiguration(name: String, _ tsLanguage: UnsafePointer<TSLanguage>) {
+        do {
+            self.languagesConfiguration[name] = try LanguageConfiguration(tsLanguage, name: name)
         } catch {
             print(error)
         }
