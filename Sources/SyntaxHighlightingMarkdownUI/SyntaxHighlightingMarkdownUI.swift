@@ -10,6 +10,7 @@ import TreeSitterRust
 import TreeSitterJSON
 import TreeSitterPython
 import TreeSitterBash
+import TreeSitterTypeScript
 import tree_sitter
 
 @available(macOS 12, *)
@@ -23,10 +24,13 @@ public class SyntaxHighlightingMarkdownUI {
             self.languagesConfiguration["swift"] = try LanguageConfiguration(tree_sitter_swift(), name: "Swift")
             self.languagesConfiguration["java"] = try LanguageConfiguration(tree_sitter_java(), name: "Java")
             self.languagesConfiguration["javascript"] = try LanguageConfiguration(tree_sitter_javascript(), name: "JS")
+            self.languagesConfiguration["jsx"] = try LanguageConfiguration(tree_sitter_javascript(), name: "JS")
             self.languagesConfiguration["rust"] = try LanguageConfiguration(tree_sitter_rust(), name: "Rust")
             self.languagesConfiguration["json"] = try LanguageConfiguration(tree_sitter_json(), name: "Json")
             self.languagesConfiguration["python"] = try LanguageConfiguration(tree_sitter_python(), name: "Python")
             self.languagesConfiguration["bash"] = try LanguageConfiguration(tree_sitter_bash(), name: "Bash")
+            self.languagesConfiguration["typescript"] = try LanguageConfiguration(tree_sitter_typescript(), name: "Typescript")
+            self.languagesConfiguration["tsx"] = try LanguageConfiguration(tree_sitter_tsx(), name: "Typescript")
         } catch {
             print(error)
         }

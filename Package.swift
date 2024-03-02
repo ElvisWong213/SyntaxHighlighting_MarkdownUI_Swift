@@ -24,6 +24,7 @@ let package = Package(
         .package(url: "https://github.com/tree-sitter/tree-sitter-json", exact: "0.20.2"),
         .package(url: "https://github.com/tree-sitter/tree-sitter-python", exact: "0.20.4"),
         .package(url: "https://github.com/tree-sitter/tree-sitter-bash", exact: "0.20.4"),
+        .package(url: "https://github.com/tree-sitter/tree-sitter-typescript", exact: "0.20.4"),
     ], targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
@@ -38,6 +39,7 @@ let package = Package(
                 .product(name: "TreeSitterJSON", package: "tree-sitter-json"),
                 .product(name: "TreeSitterPython", package: "tree-sitter-python"),
                 .product(name: "TreeSitterBash", package: "tree-sitter-bash"),
+                .product(name: "TreeSitterTypeScript", package: "tree-sitter-typescript"),
             ]
         ),
         .testTarget(
