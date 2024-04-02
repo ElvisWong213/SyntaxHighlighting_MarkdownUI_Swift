@@ -36,11 +36,13 @@ public class SyntaxHighlightingMarkdownUI {
         }
     }
     
-    public func addConfiguration(name: String, _ tsLanguage: UnsafePointer<TSLanguage>) {
+    public func addConfiguration(name: String, _ tsLanguage: UnsafePointer<TSLanguage>) -> Bool {
         do {
             self.languagesConfiguration[name] = try LanguageConfiguration(tsLanguage, name: name)
+            return true
         } catch {
             print(error)
+            return false
         }
     }
     
